@@ -13,6 +13,7 @@ import os
 IMG_NUM = 0
 PREV_IMG_NUM = -1                                  # always behind IMG_NUM by 1
 FILE_NAME_SAVE_AS = 'OCR_IMG_'                     # The OCR text dataset
+DIR_LOC = 'OCR_Image_Dataset/'                     # The directory location to save the images
 OUT_OF_BOUNDS_ERR = 10
 FILL_ERR = 30
 FORMAT_TYPE = '.jpeg'                              # The format of the image to be saved
@@ -39,6 +40,7 @@ def draw_square(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(4):  
@@ -52,6 +54,7 @@ def draw_cirle(turtle_obj, x, y, radius, color):
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
     turtle_obj.pencolor(color)
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     turtle_obj.circle(radius)
@@ -62,6 +65,7 @@ def draw_star(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(5):
@@ -76,6 +80,7 @@ def draw_triangle(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(3): 
@@ -88,6 +93,7 @@ def draw_diamond(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(2):
@@ -102,6 +108,7 @@ def draw_hexagon(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(6):
@@ -114,6 +121,7 @@ def draw_octagon(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(8):
@@ -127,6 +135,7 @@ def draw_pentagon(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     for _ in range(5):
@@ -139,6 +148,7 @@ def draw_trapazoid(turtle_obj, x, y, size, color):
     turtle_obj.penup()
     turtle_obj.goto(x, y)
     turtle_obj.pendown()
+    turtle_obj.pencolor(color)
     turtle_obj.fillcolor(color)
     turtle_obj.begin_fill()
     turtle_obj.forward(size)
@@ -150,6 +160,12 @@ def draw_trapazoid(turtle_obj, x, y, size, color):
     turtle_obj.forward(size)
     turtle_obj.end_fill()
     turtle_obj.penup()
+
+def draw_colored_bg(turtle_obj, color):
+    left_corner_x = int(-((SCREEN_WIDTH/2) + OUT_OF_BOUNDS_ERR))
+    left_corner_y = int(-((SCREEN_HEIGHT/2) + OUT_OF_BOUNDS_ERR))
+    draw_square(turtle_obj, left_corner_x, left_corner_y,
+                SCREEN_WIDTH + FILL_ERR, color)
 
 def random_font_size(text):
     # obtain font size depending on the length (word count) of the text
@@ -169,7 +185,7 @@ def random_font():
     font = random.choice(FONT)
     return font
 
-def random_coordinates_for_text():
+def random_coordinates():
     # obtain random coordinates
     x = random.randint(int(-SCREEN_WIDTH/4), int(SCREEN_WIDTH/4.5))
     y = random.randint(int(-SCREEN_HEIGHT/4), int(SCREEN_HEIGHT/4.5))
@@ -208,10 +224,7 @@ def diff_text_and_bg_color(turtle_obj, text, x, y, font, font_size):
     s = turtle.Screen()
     s.setup(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
     # only way PIL will acknowledge the background color is to draw a square as the background
-    left_corner_x = int(-((SCREEN_WIDTH/2) + OUT_OF_BOUNDS_ERR))
-    left_corner_y = int(-((SCREEN_HEIGHT/2) + OUT_OF_BOUNDS_ERR))
-    draw_square(turtle_obj, left_corner_x, left_corner_y,
-                SCREEN_WIDTH + FILL_ERR, r_color)
+    draw_colored_bg(turtle_obj, r_color)
     # randomly choose text color
     r_color = random.choice(colors)
     tk_canvas = turtle.getcanvas()
@@ -241,8 +254,10 @@ def tilted_text(text, x, y, font, font_size):
     s = turtle.Screen()
     s.bgcolor("white")
     s.setup(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
+    angles = deepcopy(ANGLE)
+    angles.remove(0)
 
-    r_angle = random.choice(ANGLE)
+    r_angle = random.choice(angles)
     neg_angle = random.randint(0, 1)
     if neg_angle == 1:
         r_angle = -r_angle
@@ -284,16 +299,64 @@ def text_in_front_of_shape(turtle_obj, text, font, font_size):
     tk_canvas.create_text(0, 0, text=text, angle=ANGLE[0], fill='black', font=(font, font_size, 'normal'))
     return s
 
-# phase something 
+# phase 7
+def random_shapes(turtle_obj, text, x, y, font, font_size):
+    r_shape = random.randint(0, 8)
+
+    colors = deepcopy(COLOR)
+    # randomly choose background color
+    # r_color = random.choice(colors)
+    # colors.remove(r_color)
+    #draw_colored_bg(turtle_obj, r_color)
+
+    s = turtle.Screen()
+    s.bgcolor("white")
+    s.setup(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
+
+    for _ in range(8):
+        r_color = random.choice(colors)
+        colors.remove(r_color)
+        r_x, r_y = random_coordinates()
+
+        if r_shape == 0:
+            draw_square(turtle_obj, r_x, r_y, 150, r_color)
+        elif r_shape == 1:
+            draw_cirle(turtle_obj, r_x, r_y, 90, r_color)
+        elif r_shape == 2:
+            draw_star(turtle_obj, r_x, r_y, 90, r_color)
+        elif r_shape == 3:
+            draw_triangle(turtle_obj, r_x, r_y, 175, r_color)
+        elif r_shape == 4:
+            draw_diamond(turtle_obj, r_x, r_y, 150, r_color)
+        elif r_shape == 5:
+            draw_hexagon(turtle_obj, r_x, r_y, 90, r_color)
+        elif r_shape == 6:
+            draw_octagon(turtle_obj, r_x, r_y, 80, r_color)
+        elif r_shape == 7:
+            draw_pentagon(turtle_obj, r_x, r_y, 90, r_color)
+        elif r_shape == 8:
+            draw_trapazoid(turtle_obj, r_x, r_y, 150, r_color)
+        
+        # choose new shape for next iteration
+        r_shape = random.randint(0, 8)
+
+    r_color = random.choice(colors)
+    tk_canvas = turtle.getcanvas()
+    tk_canvas.create_text(x, y, text=text, angle=ANGLE[0], fill=r_color, font=(font, font_size, 'normal'))
+    return s
+        
+
+# last phase
 def augment_prev_image():
     global IMG_NUM
     global PREV_IMG_NUM
-    file_to_augment = FILE_NAME_SAVE_AS + str(PREV_IMG_NUM) + FORMAT_TYPE
+    file_to_augment = DIR_LOC + FILE_NAME_SAVE_AS + str(PREV_IMG_NUM) + FORMAT_TYPE
     # read image from disk
     img = cv2.imread(file_to_augment)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     # apply random augmentation
-    r_aug = random.randint(0, 7)
+    r_aug = random.randint(0, 7) # DEBUG
+
     if r_aug == 0:
         aug = A.Blur(blur_limit=(7, 7), p=1) # blur augmentation
     elif r_aug == 1:
@@ -309,30 +372,10 @@ def augment_prev_image():
     elif r_aug == 6:
         aug = A.ShiftScaleRotate(p=1)
     elif r_aug == 7:
-        aug = A.Compose([
-        A.RandomRotate90(),
-        A.Flip(),
-        A.Transpose(),
-        A.GaussNoise(),
-        A.OneOf([
-            A.MotionBlur(p=.2),
-            A.MedianBlur(blur_limit=3, p=0.1),
-            A.Blur(blur_limit=3, p=0.1),
-        ], p=0.2),
-        A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=45, p=0.2),
-        A.OneOf([
-            A.OpticalDistortion(p=0.3),
-            A.GridDistortion(p=.1),
-        ], p=0.2),
-        A.OneOf([
-            A.CLAHE(clip_limit=2),
-            A.RandomBrightnessContrast(),
-        ], p=0.3),
-        A.HueSaturationValue(p=0.3),
-        ])
+        aug = A.InvertImg(p=1) # invert image augmentation
     aug_img = aug(image=img)['image']
     # save the augmented image
-    augmented_file = FILE_NAME_SAVE_AS + str(IMG_NUM) + FORMAT_TYPE
+    augmented_file = DIR_LOC + FILE_NAME_SAVE_AS + str(IMG_NUM) + FORMAT_TYPE
     cv2.imwrite(augmented_file, cv2.cvtColor(aug_img, cv2.COLOR_RGB2BGR))
 
     # update the global variables to keep track 
@@ -352,7 +395,7 @@ def save_turtle_canvas(screen):
     c.postscript(file=file_eps, colormode='color')
 
     img = Image.open(file_eps)
-    file_jpeg = "OCR_IMG_" + str(IMG_NUM) + FORMAT_TYPE
+    file_jpeg = DIR_LOC + FILE_NAME_SAVE_AS + str(IMG_NUM) + FORMAT_TYPE
     img.save(file_jpeg)
     # remove the EPS file
     os.remove(file_eps)
@@ -368,30 +411,30 @@ def gen_image_from_text_pipeline(text):
     t.speed(0) # fastest speed
 
     # random coordinates to place the text
-    x, y = random_coordinates_for_text()
+    x, y = random_coordinates()
     
     # random font and font size
     r_font = random_font()
     r_font_size = random_font_size(text)
 
-    # draw the base image
-    image_1 = base_image(text, x, y, r_font, r_font_size)
-    save_turtle_canvas(image_1)
+    # # draw the base image
+    # image_1 = base_image(text, x, y, r_font, r_font_size)
+    # save_turtle_canvas(image_1)
 
-    # Reset the Turtle environment
-    reset_turtle_env()
+    # # Reset the Turtle environment
+    # reset_turtle_env()
 
-    # draw the image with random text color (other than black)
-    image_2 = diff_text_color(text, x, y, r_font, r_font_size)
-    save_turtle_canvas(image_2)
+    # # draw the image with random text color (other than black)
+    # image_2 = diff_text_color(text, x, y, r_font, r_font_size)
+    # save_turtle_canvas(image_2)
 
-    reset_turtle_env()
+    # reset_turtle_env()
 
-    # draw the image with random text and background color
-    image_3 = diff_text_and_bg_color(t, text, x, y, r_font, r_font_size)
-    save_turtle_canvas(image_3)
+    # # draw the image with random text and background color
+    # image_3 = diff_text_and_bg_color(t, text, x, y, r_font, r_font_size)
+    # save_turtle_canvas(image_3)
 
-    reset_turtle_env()
+    # reset_turtle_env()
 
     # draw the image with text and dot noise in the background
     image_4 = text_with_dot_noise(t, text, x, y, r_font, r_font_size)
@@ -399,11 +442,14 @@ def gen_image_from_text_pipeline(text):
 
     reset_turtle_env()
 
-    # draw the image with tilted text
-    image_5 = tilted_text(text, x, y, r_font, r_font_size)
-    save_turtle_canvas(image_5)
+    # augment the previous image randomly
+    augment_prev_image()
 
-    reset_turtle_env()
+    # draw the image with tilted text
+    # image_5 = tilted_text(text, x, y, r_font, r_font_size)
+    # save_turtle_canvas(image_5)
+
+    # reset_turtle_env()
     
     # draw the image with text in front of a random shape (no coordinates needed since the shape and text is centered in the screen)
     image_6 = text_in_front_of_shape(t, text, r_font, r_font_size)
@@ -411,13 +457,20 @@ def gen_image_from_text_pipeline(text):
 
     reset_turtle_env()
 
-    # augment the previous image randomly
+    augment_prev_image()
+
+    # draw the image with random shapes in the background
+    image_7 = random_shapes(t, text, x, y, r_font, r_font_size)
+    save_turtle_canvas(image_7)
+
+    reset_turtle_env()
+
     augment_prev_image()
 
 # ----------------------CONSOLE----------------------
 def main():
     #long_test = 'The Fantastic Adventures of Captain Cosmos and the Interstellar Dare'
-    test = 'This is a test'
+    test = 'Test run'
     gen_image_from_text_pipeline(text=test)
     kill_turtle() # terminate the turtle graphics window
 
